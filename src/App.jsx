@@ -32,6 +32,11 @@ const App = () => {
       const tempImg = URL.createObjectURL(file);
       const updatedImages = [...imgs, { image: tempImg }];
       setImgs(updatedImages);
+
+      toast.success("Image added successfully!", {
+        position: "top-center",
+        autoClose: 1000,
+      });
     }
   };
 

@@ -25,24 +25,22 @@ html {
   grid-column: auto;
 }
 
-/* Responsive styles for tablets */
-@media screen and (max-width: 768px) {
+/* Responsive styles using Tailwind CSS classes */
+@media (max-width: 768px) {
   .grid-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
   .grid-item {
-    height: 250px; /* Adjust the height as needed */
+    height: 250px;
   }
 }
 
-/* Responsive styles for mobile */
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
   .grid-container {
     grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
   }
   .grid-item {
-    height: 350px; /* Adjust the height as needed */
+    height: 350px;
   }
 }

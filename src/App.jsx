@@ -11,11 +11,12 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState([]);
-  const fileRef = useRef();
+  const fileRef = useRef(); // Ref for file input
+
+  // Function to handle drag and drop reordering of images
   const onDragEnd = (result) => {
     const { destination } = result;
     if (!destination) return;
-
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
     if (sourceIndex === destinationIndex) return;
@@ -25,7 +26,7 @@ const App = () => {
     updatedImgs[destinationIndex] = temp;
     setImgs(updatedImgs);
   };
-
+  // Function to handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -39,19 +40,19 @@ const App = () => {
       });
     }
   };
-
+  // Function to delete selected images
   const handleDelete = (selected, imgs) => {
     const updatedImages = imgs.filter((_, index) => !selected.includes(index));
 
     setImgs(updatedImages);
     setSelected([]);
-
+    // Notify the user about the image upload
     toast.success(`Deleted ${selected.length} images`, {
       position: "top-center",
       autoClose: 1000,
     });
   };
-
+  // Function to fetch images from a JSON file
   async function fetchImages() {
     try {
       const response = await fetch("./images.json");
@@ -67,7 +68,7 @@ const App = () => {
       throw error;
     }
   }
-
+  // Use effect to fetch images when the component mounts
   useEffect(() => {
     const fetchImageData = async () => {
       try {
@@ -82,7 +83,7 @@ const App = () => {
 
     fetchImageData();
   }, []);
-
+  // If data is still loading, show a loading spinner
   if (loading) {
     return (
       <div className="fixed top-0 left-0 h-screen w-screen flex items-center justify-center bg-white opacity-75 z-50">

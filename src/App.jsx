@@ -2,9 +2,12 @@ import { Checkbox } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [imgs, setImgs] = useState([]);
+  console.log(imgs);
   const [loading, setLoading] = useState(true);
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState([]);
@@ -27,38 +30,52 @@ const App = () => {
     const file = e.target.files[0];
     if (file) {
       const tempImg = URL.createObjectURL(file);
-
-      fileRef.current.value = null;
-      setImgs((p) => [...p, tempImg]);
+      const updatedImages = [...imgs, { image: tempImg }];
+      setImgs(updatedImages);
     }
   };
+
   const handleDelete = (selected, imgs) => {
-    selected.forEach((i) => {
-      imgs.splice(i, 1);
-    });
+    const updatedImages = imgs.filter((_, index) => !selected.includes(index));
 
-    setImgs(imgs);
+    setImgs(updatedImages);
     setSelected([]);
-  };
-  useEffect(() => {
-    // Fetch images from the API
-    fetch("./images.json")
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Failed to fetch data");
-        }
-      })
-      .then((data) => {
-        setImgs(data);
 
+    toast.success(`Deleted ${selected.length} images`, {
+      position: "top-center",
+      autoClose: 1000,
+    });
+  };
+
+  async function fetchImages() {
+    try {
+      const response = await fetch("./images.json");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    const fetchImageData = async () => {
+      try {
+        const data = await fetchImages();
+        setImgs(data);
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching data:", error);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchImageData();
   }, []);
 
   if (loading) {
@@ -81,12 +98,12 @@ const App = () => {
               {selected.length} Files Selected
             </h1>
           </div>
-          <p
-            className="text-red-500 font-bold text-lg cursor-pointer"
+          <button
+            className="bg-red-500 text-white font-bold text-lg py-2 px-4 rounded cursor-pointer hover:bg-red-600"
             onClick={() => handleDelete(selected, imgs)}
           >
             Delete
-          </p>
+          </button>
         </div>
       ) : (
         <h1 className="text-2xl font-bold ">Gallery</h1>
@@ -198,6 +215,7 @@ const App = () => {
             />
           </div>
         </div>
+        <ToastContainer />
       </DragDropContext>
     </main>
   );

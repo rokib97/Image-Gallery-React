@@ -6,8 +6,9 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 const App = () => {
   const [imgs, setImgs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const fileRef = useRef();
+  const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState([]);
+  const fileRef = useRef();
   const onDragEnd = (result) => {
     const { destination } = result;
     if (!destination) return;
@@ -15,17 +16,15 @@ const App = () => {
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
     if (sourceIndex === destinationIndex) return;
-
     const updatedImgs = [...imgs];
     let temp = updatedImgs[sourceIndex];
     updatedImgs[sourceIndex] = updatedImgs[destinationIndex];
     updatedImgs[destinationIndex] = temp;
     setImgs(updatedImgs);
   };
-  const [hover, setHover] = useState(null);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       const tempImg = URL.createObjectURL(file);
 
@@ -76,9 +75,12 @@ const App = () => {
     <main className="max-w-7xl mx-auto py-5">
       {selected.length > 0 ? (
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold ">
-            {selected.length} Files Selected
-          </h1>
+          <div className="flex items-center">
+            <Checkbox isChecked={true} size="lg" colorScheme="green" />
+            <h1 className="text-2xl font-bold ml-2">
+              {selected.length} Files Selected
+            </h1>
+          </div>
           <p
             className="text-red-500 font-bold text-lg cursor-pointer"
             onClick={() => handleDelete(selected, imgs)}
